@@ -1,4 +1,5 @@
-import Prelude hiding (take, drop, zipWith)
+import Prelude hiding (take, drop, zipWith, showList)
+import Data.List (intercalate)
 
 take :: Int -> [a] -> [a]
 take n _ | n <= 0 = []
@@ -58,3 +59,8 @@ zipWith _ _ [] = []
 zipWith f (x:xs) (y:ys) = (f x y) : zipWith f xs ys
 
 data Mat a = Mat [[a]]
+instance Show a => Show (Mat a) where
+    show (Mat rows) = intercalate "\n" (map showLine rows)
+        where
+        showLine [] = ""
+        showLine (x:xs) = (show x) ++ " " ++ showLine xs
