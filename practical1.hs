@@ -64,3 +64,10 @@ instance Show a => Show (Mat a) where
         where
         showLine [] = ""
         showLine (x:xs) = (show x) ++ " " ++ showLine xs
+
+
+myQuickSort :: Ord a => [a] -> [a]
+myQuickSort [] = []
+myQuickSort (x:xs) = let left = [y | y <- xs, y < x] in 
+                        let right = [y | y <- xs, y >= x] in
+                            (myQuickSort left) ++ x : (myQuickSort right)
