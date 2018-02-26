@@ -110,3 +110,16 @@ suffixes [] = []
 suffixes (x:[]) = [x] : []
 suffixes (x:xs) = let s = suffixes xs in
                     (x : (head s)) : s
+
+-- TODO: this generates all increasing sequences (non-consecutive)
+--segments :: Ord a => [a] -> [[a]]
+--segments (x:[]) = [x] : []
+--segments (x:xs) = let s = segments xs in
+--                    let c = filter (\s_elem -> head s_elem > x) s in
+--                    [x] : s ++ map (x:) c
+
+
+parts :: [a] -> [[[a]]]
+parts (x:[]) = [[x]] : []
+parts (x:xs) = let p = parts xs in
+                map ([x]:) p ++ map (\y -> (([x]++) $ head y) : (tail y)) p
