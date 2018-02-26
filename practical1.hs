@@ -95,3 +95,8 @@ trol (Tri rows) = Tri (mapRows rows)
 
 tror :: Tri a -> Tri a
 tror (Tri rows) = Tri (map reverse $ mapRows rows)
+
+sublists :: [a] -> [[a]]
+sublists [] = [[]]
+sublists (x:xs) = let s = sublists xs in
+                    s ++ map (x:) s
