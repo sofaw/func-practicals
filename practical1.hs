@@ -85,3 +85,13 @@ instance Show a => Show (Tri a) where
                         where
                         showLinw _ [] = ""
                         showLine n x = (intercalate "" $ replicate n " ") ++ (intercalate " " (map show x)) ++ "\n"
+
+mapRows :: [[a]] -> [[a]]
+mapRows [] = []
+mapRows rows = (mapRows $ map tail $ tail rows) ++ [map head rows]
+
+trol :: Tri a -> Tri a
+trol (Tri rows) = Tri (mapRows rows)
+
+tror :: Tri a -> Tri a
+tror (Tri rows) = Tri (map reverse $ mapRows rows)
