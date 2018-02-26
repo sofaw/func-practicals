@@ -100,3 +100,13 @@ sublists :: [a] -> [[a]]
 sublists [] = [[]]
 sublists (x:xs) = let s = sublists xs in
                     s ++ map (x:) s
+
+prefixes :: [a] -> [[a]]
+prefixes [] = []
+prefixes (x:xs) = [x] : map (x:) (prefixes xs)
+
+suffixes :: [a] -> [[a]]
+suffixes [] = []
+suffixes (x:[]) = [x] : []
+suffixes (x:xs) = let s = suffixes xs in
+                    (x : (head s)) : s
