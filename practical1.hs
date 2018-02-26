@@ -71,3 +71,17 @@ myQuickSort [] = []
 myQuickSort (x:xs) = let left = [y | y <- xs, y < x] in 
                         let right = [y | y <- xs, y >= x] in
                             (myQuickSort left) ++ x : (myQuickSort right)
+
+transpose :: Mat a -> Mat a
+transpose (Mat rows) = Mat (transposeRows rows)
+                        where
+                        transposeRows ([]:_)  = []
+                        transposeRows rows = map head rows : transposeRows (map tail rows)
+
+data Tri a = Tri [[a]]
+instance Show a => Show (Tri a) where
+    show (Tri []) = " "
+    show (Tri (x:xs)) = (showLine (length xs) x ++  (show (Tri xs)))
+                        where
+                        showLinw _ [] = ""
+                        showLine n x = (intercalate "" $ replicate n " ") ++ (intercalate " " (map show x)) ++ "\n"
