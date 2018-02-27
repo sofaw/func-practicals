@@ -1,5 +1,6 @@
 import Prelude hiding (take, drop, zipWith, showList)
 import Data.List (intercalate, union)
+import System.Environment
 
 -- Q1 --
 take :: Int -> [a] -> [a]
@@ -117,14 +118,18 @@ suffixes (x:[]) = [x] : []
 suffixes (x:xs) = let s = suffixes xs in
                     (x : (head s)) : s
 -- Q10 --
--- TODO
---segments :: Ord a => [a] -> [[a]]
-
 sequences :: Ord a => [a] -> [[a]]
 sequences (x:[]) = [x] : []
 sequences (x:xs) = let s = sequences xs in
                     let c = filter (\s_elem -> head s_elem > x) s in
                     [x] : s ++ map (x:) c
+
+segments :: Ord a => [a] -> [[a]]
+segments (x:[]) = [x] : []
+segments (x:y:ys) = let s = segments (y:ys) in
+                     let c = filter (\e -> head e == y) s in
+                    [x] : s ++ map (x:) c
+                        
 
 -- Q11 --
 parts :: [a] -> [[[a]]]
@@ -157,5 +162,3 @@ change (c:cs) m = let usec = [c:l | l <- ((change (c:cs) (m-c)) `union` (change 
                 let discardc = [l | l <- (change cs (m))] in
                 usec ++ discardc
 
--- Q14 --
--- TODO
