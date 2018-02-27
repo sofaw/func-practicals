@@ -1,5 +1,5 @@
 import Prelude hiding (take, drop, zipWith, showList)
-import Data.List (intercalate)
+import Data.List (intercalate, union)
 
 take :: Int -> [a] -> [a]
 take n _ | n <= 0 = []
@@ -28,7 +28,6 @@ duplicates (x:xs) = if (length filtered == length xs)
                     then duplicates xs
                     else x : duplicates filtered
                     where filtered = filter (/=x) xs
-
 
 sort :: Ord a => [a] -> [a]
 sort [] = []
@@ -64,7 +63,6 @@ instance Show a => Show (Mat a) where
         where
         showLine [] = ""
         showLine (x:xs) = (show x) ++ " " ++ showLine xs
-
 
 myQuickSort :: Ord a => [a] -> [a]
 myQuickSort [] = []
@@ -111,13 +109,11 @@ suffixes (x:[]) = [x] : []
 suffixes (x:xs) = let s = suffixes xs in
                     (x : (head s)) : s
 
--- TODO: this generates all increasing sequences (non-consecutive)
---segments :: Ord a => [a] -> [[a]]
---segments (x:[]) = [x] : []
---segments (x:xs) = let s = segments xs in
---                    let c = filter (\s_elem -> head s_elem > x) s in
---                    [x] : s ++ map (x:) c
-
+sequences :: Ord a => [a] -> [[a]]
+sequences (x:[]) = [x] : []
+sequences (x:xs) = let s = sequences xs in
+                    let c = filter (\s_elem -> head s_elem > x) s in
+                    [x] : s ++ map (x:) c
 
 parts :: [a] -> [[[a]]]
 parts (x:[]) = [[x]] : []
@@ -138,3 +134,14 @@ perms (x:[]) = [x] : []
 perms (x:xs) = let p = perms xs in
                 let l = length (head p) in
                 concat $ map (insertAllPos l x) p
+
+-- TODO
+--segments :: Ord a => [a] -> [[a]]
+
+change :: [Int] -> Int -> [[Int]]
+change [] _ = []
+change _ m | m <= 0 = []
+change (c:cs) m | c==m = [c] : (change cs m)
+change (c:cs) m = let usec = [c:l | l <- ((change (c:cs) (m-c)) `union` (change cs (m-c)))] in
+                let discardc = [l | l <- (change cs (m))] in
+                usec ++ discardc
