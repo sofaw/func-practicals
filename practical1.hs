@@ -123,3 +123,18 @@ parts :: [a] -> [[[a]]]
 parts (x:[]) = [[x]] : []
 parts (x:xs) = let p = parts xs in
                 map ([x]:) p ++ map (\y -> (([x]++) $ head y) : (tail y)) p
+
+insertAt :: Int -> a -> [a] -> [a] 
+insertAt z y xs = as ++ (y:bs)
+                  where
+                    (as,bs) = splitAt z xs
+
+insertAllPos :: Int -> a -> [a] -> [[a]]
+insertAllPos (-1) _ _ = []
+insertAllPos n x ys = (insertAt n x ys) : insertAllPos (n-1) x ys
+
+perms :: [a] -> [[a]]
+perms (x:[]) = [x] : []
+perms (x:xs) = let p = perms xs in
+                let l = length (head p) in
+                concat $ map (insertAllPos l x) p
