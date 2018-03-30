@@ -15,23 +15,38 @@ drop n (x:xs) | n > 0
     = drop (n - 1) xs
 
 -- Q2 --
-positions2 :: Eq a => [a] -> a -> Int -> [Int]
-positions2 [] i n = []
-positions2 (x:xs) i n = if i == x
-                            then n : positions2 xs i (n + 1)
-                        else
-                            positions2 xs i (n + 1) 
+--positions2 :: Eq a => [a] -> a -> Int -> [Int]
+--positions2 [] i n = []
+--positions2 (x:xs) i n = if i == x
+--                            then n : positions2 xs i (n + 1)
+--                        else
+--                            positions2 xs i (n + 1) 
+
+--positions :: Eq a => [a] -> a -> [Int]
+--positions xs i = positions2 xs i 0
 
 positions :: Eq a => [a] -> a -> [Int]
-positions xs i = positions2 xs i 0
+positions xs i = posStarting 0 xs
+                 where 
+                 posStarting _ [] = []
+                 posStarting s (x:xs) = if i==x then s:p else p
+                   where
+                   p = posStarting (s+1) xs
 
 -- Q3 --
+--duplicates :: Eq a => [a] -> [a]
+--duplicates [] = []
+--duplicates (x:xs) = if (length filtered == length xs)
+--                    then duplicates xs
+--                    else x : duplicates filtered
+--                    where filtered = filter (/=x) xs
+
 duplicates :: Eq a => [a] -> [a]
-duplicates [] = []
-duplicates (x:xs) = if (length filtered == length xs)
-                    then duplicates xs
-                    else x : duplicates filtered
-                    where filtered = filter (/=x) xs
+duplicates (x:[]) = []
+duplicates (x:xs) = if x `elem` xs && not (x `elem` d) then
+                    (x : d) else d
+                    where
+                    d = duplicates xs
 
 -- Q4 --
 sort :: Ord a => [a] -> [a]
@@ -52,9 +67,17 @@ insert :: Ord a => a -> [a] -> [a]
 insert x [] = x : []
 insert x (y:ys) = if x < y then (x : y : ys)
                     else y : insert x ys
+
 insertionSort :: Ord a => [a] -> [a]
 insertionSort [] = []
 insertionSort (x:xs) = insert x (insertionSort xs)
+
+foldInsertionSort :: Ord a => [a] -> [a]
+foldInsertionSort = foldr insert []
+                           where
+                           insert x [] = (x:[])
+                           insert x (y:ys) = if x < y then (x:y:ys)
+                                             else y : (insert x ys)
 
 myQuickSort :: Ord a => [a] -> [a]
 myQuickSort [] = []
@@ -69,28 +92,41 @@ zipWith _ _ [] = []
 zipWith f (x:xs) (y:ys) = (f x y) : zipWith f xs ys
 
 -- Q6 --
-data Mat a = Mat [[a]]
+data Mat a = Mat {mrows :: [[a]]}
+--instance Show a => Show (Mat a) where
+--    show (Mat rows) = intercalate "\n" (map showLine rows)
+--        where
+--        showLine [] = ""
+--        showLine (x:xs) = (show x) ++ " " ++ showLine xs
 instance Show a => Show (Mat a) where
-    show (Mat rows) = intercalate "\n" (map showLine rows)
-        where
-        showLine [] = ""
-        showLine (x:xs) = (show x) ++ " " ++ showLine xs
+  show = unlines . map (unwords . map show) . mrows
 
+
+--transpose :: Mat a -> Mat a
+--transpose (Mat rows) = Mat (transposeRows rows)
+--                        where
+--                        transposeRows ([]:_)  = []
+--                        transposeRows rows = map head rows : transposeRows (map tail rows)
 
 transpose :: Mat a -> Mat a
-transpose (Mat rows) = Mat (transposeRows rows)
-                        where
-                        transposeRows ([]:_)  = []
-                        transposeRows rows = map head rows : transposeRows (map tail rows)
+transpose = Mat . trans . mrows
+            where
+            trans [r] = map (:[]) r
+            trans (r:rs) = zipWith (:) r (trans rs)
 
 -- Q7 --
-data Tri a = Tri [[a]]
+data Tri a = Tri {trows :: [[a]]}
+--instance Show a => Show (Tri a) where
+--    show (Tri []) = " "
+--    show (Tri (x:xs)) = (showLine (length xs) x ++  (show (Tri xs)))
+--                        where
+--                        showLine _ [] = ""
+--                        showLine n x = (intercalate "" $ replicate n " ") ++ (intercalate " " (map show x)) ++ "\n"
+
 instance Show a => Show (Tri a) where
-    show (Tri []) = " "
-    show (Tri (x:xs)) = (showLine (length xs) x ++  (show (Tri xs)))
-                        where
-                        showLinw _ [] = ""
-                        showLine n x = (intercalate "" $ replicate n " ") ++ (intercalate " " (map show x)) ++ "\n"
+  show (Tri rs) = unlines (zipWith (++) spaces  (map (unwords . map show) rs))
+         where
+         spaces = map (map (const ' ')) (reverse rs)
 
 mapRows :: [[a]] -> [[a]]
 mapRows [] = []
@@ -112,11 +148,16 @@ prefixes :: [a] -> [[a]]
 prefixes [] = []
 prefixes (x:xs) = [x] : map (x:) (prefixes xs)
 
+--suffixes :: [a] -> [[a]]
+--suffixes [] = []
+--suffixes (x:[]) = [x] : []
+--suffixes (x:xs) = let s = suffixes xs in
+--                    (x : (head s)) : s
+
 suffixes :: [a] -> [[a]]
 suffixes [] = []
-suffixes (x:[]) = [x] : []
-suffixes (x:xs) = let s = suffixes xs in
-                    (x : (head s)) : s
+suffixes (x:xs) = (x:xs) : suffixes xs
+
 -- Q10 --
 sequences :: Ord a => [a] -> [[a]]
 sequences (x:[]) = [x] : []

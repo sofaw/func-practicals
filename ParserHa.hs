@@ -4,6 +4,7 @@ import Pretty
 import Data.Char (isAlpha)
 
 -- Parsing --
+-- TODO: need to update to ignore newlines
 
 data Prog = Prog [Eqn] deriving Show
 data Eqn = Eqn Name [Pat] Exp deriving Show
@@ -69,3 +70,8 @@ isNilOrVar :: Exp -> Bool
 isNilOrVar (Nil) = True
 isNilOrVar (Var _) = True
 isNilOrVar _ = False
+
+-- Program --
+-- TODO
+main :: IO ()
+main = do 
