@@ -74,7 +74,7 @@ instance SetSpec Tree where
   _    `inter` Null        = Null
   x  `inter` Node y b z    = if member b x then
                              Node y' b z'
-                             else y' `union` z'
+                             else y' `cat` z'
                              where
                              y'  =  (x `before` b) `inter` y
                              z'  =  (x `beyond` b) `inter` z
@@ -82,7 +82,7 @@ instance SetSpec Tree where
   Null `diff` x            = x
   x    `diff` Null         = x
   x `diff` Node y b z      = if member b x then
-                             y' `union` z'
+                             y' `cat` z'
                              else Node y' b z'
                              where
                              y' = (x `before` b) `diff` y

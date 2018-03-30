@@ -123,14 +123,14 @@ instance SetSpec BalTree where
   Null `inter` _             = Null
   _    `inter` Null          = Null
   x    `inter` Node _ y b z  = if member b x then balance(y',b,z')
-                               else y' `union` z'
+                               else y' `cat` z'
                                where
                                y' = (x `before` b) `inter` y
                                z' = (x `beyond` b) `inter` z  
 
   Null `diff` x              = x
   x    `diff` Null           = x
-  x    `diff` Node _ y b z   = if member b x then y' `union` z'
+  x    `diff` Node _ y b z   = if member b x then y' `cat` z'
                                else balance(y',b,z')
                                where
                                y' = (x `before` b) `diff` y
